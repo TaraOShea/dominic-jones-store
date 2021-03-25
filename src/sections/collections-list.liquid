@@ -1,0 +1,129 @@
+{% paginate collection.products by 12 %}
+
+<div class='collection'>
+  <header role="banner" class='mha'>
+    <div class='outer'>
+      <div class="collection-details">
+        {% if section.settings.tags_enable %}
+            {% unless collection.all_tags.size == 0 %}
+            <div class="filters-toolbar">
+                    {% if current_tags %}
+                        {% if collection.handle %}
+                            <a class="filters-toolbar__label" href="/collections/{{ collection.handle }}">Shop all</a>
+                        {% elsif collection.current_type %}
+                            <a class="filters-toolbar__label" href="{{ collection.current_type | url_for_type }}">Shop all</a>
+                        {% elsif collection.current_vendor %}
+                            <a class="filters-toolbar__label" href="{{ collection.current_vendor | url_for_vendor }}">Shop all</a>
+                        {% endif %}
+                    {% else %}
+                        <span  class="filters-toolbar__label">Shop all</span>
+                    {% endif %}
+                    <span data-component='collectionList'>
+                      <button id="filter-category" class="filters-toolbar__label"><span class="chevron">+</span>Filter By</button>
+                      <div class="filters-toolbar__sub_menu">
+                          {% for tag in collection.all_tags %}
+                              <a class="filters-toolbar__label" href="/collections/{% if collection.handle != blank %}{{ collection.handle }}{% else %}all{% endif %}/{{ tag | handleize }}"{% if current_tags contains tag %} selected="selected"{% endif %}>{{ tag }}</a>
+                          {% endfor %}
+                      </div>
+                    </span>
+            </div>
+            {% endunless %}
+        {% endif %}
+        {% if collection.description != blank %}
+          <div class="collection-desc">
+            {{ collection.description }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <section class='collection__grid'>
+    <div class='outer'>
+      {% if collection.tags %}
+        {% for tag in collection.tags %}
+          {% if current_tags contains tag %}
+            <h3>{{ tag | downcase | capitalize }}</h3>
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+        <ul class='collection__grid__row'>
+          {% for product in collection.products %}
+            {% assign url = product.url | within: collection %}
+            {% assign price = product.price | money %}
+            {% assign comparePrice = product.compare_at_price | money %}
+            {% assign image = product.featured_image.src | product_img_url: '600x' %}
+            {% assign alt = product.featured_image.alt | escape %}
+
+            <li class='collection__grid__item'>
+              <a href='{{ url }}'>
+                {%
+                  include 'component-image' with
+                  src: image,
+                  alt: alt
+                %}
+              </a>
+              <a href='{{ url }}'>
+                <h3>{{ product.title }}</h3>
+              </a>
+
+              <p class=''>
+                {% if comparePrice > price %}
+                  {% if product.price_varies %}
+                    from {{ price }}
+                  {% else %}
+                    {{ price }} <s>{{ comparePrice }}</s>
+                  {% endif %}
+                {% else %}
+                  {{ price }}
+                {% endif %}
+
+                {% unless product.available %}
+                  sold out
+                {% endunless %}
+              </p>
+            </li>
+          {% endfor %}
+        </ul>
+    </div>
+  </section>
+
+  {% if paginate.pages > 1 %}
+    {{ paginate | default_pagination }}
+  {% endif %}
+</div>
+
+{% endpaginate %}
+
+
+
+{% schema %}
+{
+  "name": {
+    "de": "Kategorie-Seiten",
+    "en": "Collection pages",
+    "es": "Páginas de colección",
+    "fr": "Pages de collections",
+    "it": "Pagine delle collezioni",
+    "ja": "コレクションページ",
+    "pt-BR": "Páginas de coleções"
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "tags_enable",
+      "label": {
+        "de": "Tag-Filtern erlauben",
+        "en": "Enable tag filtering",
+        "es": "Habilitar filtro de etiquetas",
+        "fr": "Activer le filtrage par balises",
+        "it": "Attiva filtro tag",
+        "ja": "タグでの絞り込みを有効にする",
+        "pt-BR": "Ativar filtragem de tags"
+      },
+      "default": true
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,26 @@
+<footer class='slater-footer'>
+  <div class='outer'>
+    <!-- {% assign footer_menu = section.settings.footer_menu %}
+    {% if linklists[footer_menu].links.size > 0 %}
+      <ul class='f aic'>
+        {% for link in linklists[footer_menu].links %}
+          <li class='mr1 pr1'><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %} -->
+  </div>
+</footer>
+
+{% schema %}
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "footer_menu",
+        "label": "First menu",
+        "default": "footer"
+      }
+    ]
+  }
+{% endschema %}
