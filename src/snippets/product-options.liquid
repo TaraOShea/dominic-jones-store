@@ -1,8 +1,7 @@
 <div class='product-options-wrapper rel'>
   {% unless product.has_only_default_variant %}
-    {% comment %}
+    
       <div class='py1'>
-        <h6 class='c-green'><em>use selects</em></h6>
         {% for option in product.options_with_values %}
           <div class='py05'>
             {%- capture options -%}
@@ -27,10 +26,8 @@
           </div>
         {% endfor %}
       </div>
-    {% endcomment %}
-
+<!-- 
       <div class='py1'>
-        <!-- <h6 class='c-green'><em>or radios</em></h6> -->
         {% for option in product.options_with_values %}
           <div class='py05'>
             <label>{{ option.name }}</label>
@@ -47,18 +44,19 @@
             </div>
           </div>
         {% endfor %}
-      </div>
-    {% endunless %}
-
+      </div> -->
+  {% endunless %}
+  
   {%- capture options -%}
     {% for variant in product.variants %}
       <option value='{{ variant.id }}'
         data-avalible='{{variant.available}}'
+        data-price='{{variant.price | money}}'
         {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
         {% unless variant.available %}disabled{% endunless %}>{{ variant.title }}</option>
     {% endfor %}
   {%- endcapture -%}
-
+  
   <script>
     // (c) Copyright 2016 Caroline Schnapp. All Rights Reserved. Contact: mllegeorgesand@gmail.com
     // See https://docs.shopify.com/themes/customization/navigation/link-product-options-in-menus
@@ -102,9 +100,9 @@
     include 'component-select' with
     name: 'id'
     options: options
-    placeholder: 'Select Option'
     className: 'js-variant'
     required: true
-    attributes: 'data-option-main'
+    attributes: 'data-option-main',
+    size: product.variants.size
   %}
 </div>

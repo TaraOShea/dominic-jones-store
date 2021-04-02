@@ -5,18 +5,17 @@
 {%- capture cx -%}
   select-wrapper x rel {{ className }}
 {%- endcapture -%}
-
 <div class='{{ cx }}' style='{{ style }}'>
   <label for='{{ id | default: uid | strip }}' class='hide'>{{ label }}</label>
-
   <div class='rel'>
     <select
       id='{{ id | default: uid | strip }}'
       name='{{ name | default: label | strip }}'
+      class='{% if size != blank and size <= 1 %}hide{%endif%}'
       value='{{ value }}'
       {{ attributes }}
       {% if required %}required{% endif %}>
-      {% if placeholder %}<option disabled selected>{{ placeholder }}</option>{% endif %}
+      <!-- {% if placeholder %}<option disabled selected>{{ placeholder }}</option>{% endif %} -->
       {{ options }}
     </select>
 
@@ -32,3 +31,4 @@
 {% assign placeholder = blank %}
 {% assign options = blank %}
 {% assign attributes = blank %}
+{% assign size = blank %}

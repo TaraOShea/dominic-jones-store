@@ -18,7 +18,7 @@
 
 /* eslint-disable */
 
-export function formatMoney (cents, format = '${{amount}}') {
+export function formatMoney (cents, format = '£{{amount}}') {
   if (typeof cents === 'string') {
     cents = cents.replace('.', '')
   }

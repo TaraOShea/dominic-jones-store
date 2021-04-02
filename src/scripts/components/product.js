@@ -9,7 +9,7 @@ export default component((node, ctx) => {
   let currentVariant = product.variants.filter(v => v.id === selectedOrFirstAvailableVariant)[0]
   let currentInventory = json.inventory.filter(v => v.id === currentVariant.id)[0]
   
-  console.log(json)
+  console.log(json, currentVariant)
 
   form.addEventListener('submit', e => {
     e.preventDefault()

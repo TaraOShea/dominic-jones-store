@@ -42,13 +42,16 @@
     {{ content_for_header }}
   </head>
 
-  <body class="bg-beige">
+  <body {% if template == 'index' %}id="index"{% endif %} class="c-dark bg-light">
+
     {% section 'header' %}
+
 
     <main role='main' id='root'>
       {{ content_for_layout }}
-      {% section 'footer' %}
     </main>
+  
+    {% section 'footer' %}
 
     <div id='siteOverlay' class='site-overlay'></div>
 

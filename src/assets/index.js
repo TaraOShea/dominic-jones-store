@@ -22,7 +22,7 @@
           })
           socket.on('disconnect', function disconnect () {
             disconnected = true
-          }) 
+          })
           socket.on('reconnect_failed', function reconnectFailed (e) {
             if (disconnected) return
             console.group("slater - %cconnection to server at 4000 failed", "color: red")
@@ -743,7 +743,7 @@ __webpack_require__.r(__webpack_exports__);
   }); //SITE COLOUR
 
   if (localStorage.getItem('siteColour') !== null) {
-    localStorage.getItem('siteColour') === 'dark' ? document.body.className = 'bg-dark c-beige' : document.body.className = 'c-dark bg-beige';
+    localStorage.getItem('siteColour') === 'dark' ? document.body.className = 'bg-dark c-light' : document.body.className = 'c-dark bg-light';
   } //COLOUR SWITCH
 
 
@@ -752,10 +752,10 @@ __webpack_require__.r(__webpack_exports__);
       e.preventDefault();
 
       if (swatches[_i].getAttribute('data-colour') == 'dark') {
-        document.body.className = 'bg-dark c-beige';
+        document.body.className = 'bg-dark c-light';
         localStorage.setItem('siteColour', 'dark');
       } else if (swatches[_i].getAttribute('data-colour') == 'light') {
-        document.body.className = 'c-dark bg-beige';
+        document.body.className = 'c-dark bg-light';
         localStorage.setItem('siteColour', 'light');
       }
     });

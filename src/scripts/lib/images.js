@@ -11,7 +11,7 @@
  * @param {Array} images - A list of image urls
  * @param {String} size - A shopify image size attribute
  */
-export function preload (images, size) {
+ export function preload (images, size) {
   if (typeof images === 'string') {
     images = [images]
   }

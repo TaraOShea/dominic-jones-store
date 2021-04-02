@@ -6,7 +6,7 @@
   <section data-component='productSelection'>
     <div class='outer'>
       <div class='container--l mxa'>
-        <div class='slater-product f aic jcb fw'>
+        <div class='slater-product f jcb fw'>
 
           <div class='slater-product__images'>
             <ul>
@@ -91,13 +91,11 @@
                 %}
               </div>
 
-              <div class='py1'>
-                {% include 'component-counter' %}
-              </div>
+              {% include 'component-counter' %}
 
-              <div class='f aic py1'>
+              <div class='f aic py1 jcb'>
                 <span data-price>{{ current_variant.price | money }}</span>
-                <s data-compare-price style='display: none'>{{ current_variant.compare_at_price | money }}</s>
+                <s data-compare-price>{{ current_variant.compare_at_price | money }}</s>
               </div>
 
               <div class='py1'>
@@ -108,12 +106,20 @@
                     Out of Stock
                   {% endif %}
                 {%- endcapture -%}
+
+                {%- capture ctaclasses -%}
+                  {% if product.available %}
+                    js-add-to-cart in-stock
+                  {% else %}
+                    js-add-to-cart out-of-stock
+                  {% endif %}
+                {%- endcapture -%}
                 {%
                   include 'component-button' with
                   tag: 'button',
                   name: 'add',
                   type: 'submit',
-                  className: 'js-add-to-cart',
+                  className: ctaclasses,
                   cta: cta
                 %}
               </div>

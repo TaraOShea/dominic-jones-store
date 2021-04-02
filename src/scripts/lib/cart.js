@@ -1,20 +1,29 @@
 import fetch from 'unfetch'
 import app from '@/app.js'
 
-export function addVariant (variant, quantity) {
-  const numAvailable = variant.inventory_policy === 'deny' && variant.inventory_management === 'shopify' ? (
-    variant.inventory_quantity
-  ) : null // null means they can add as many as they want
+export function addVariant (variant, quantity, inventory) {
 
+  // const numAvailable = variant.inventory_policy === 'deny' && variant.inventory_management === 'shopify' ? (
+  //   variant.inventory_quantity
+  // ) : null // null means they can add as many as they want
+
+  const numAvailable = variant.inventory_management === 'shopify' ? (
+    inventory.amountAvailable
+  ) : null
+
+  
   return fetchCart().then(({ items }) => {
-    const existing = items.filter(item => item.id === variant.id)[0] || {}
-    const numRequested = (existing.quantity || 0) + quantity
+    let numInCart = items.filter(v => v.id === variant.id)[0];
+    numInCart = numInCart !== undefined ? numInCart.quantity : 0;
+    console.log(numInCart, parseInt(quantity), inventory.amountAvailable)
 
-    if (numAvailable !== null && numRequested > numAvailable) {
-      const err = `There are only ${numAvailable} of that product available, requested ${numRequested}.`
-      app.emit('error', err)
-      throw new Error(err)
+    if (inventory.amountAvailable !== null && (numInCart + parseInt(quantity)) > inventory.amountAvailable) {  
+      const err = `There are only ${inventory.amountAvailable} of that product available, requested ${parseInt(quantity)}.`
+      console.log("error")
+      app.emit('cartError', {error: err})
+      // throw new Error(err)
     } else {
+      console.log("add")
       return addItemById(variant.id, quantity)
     }
   })
@@ -55,6 +64,7 @@ function changeAddon (line, quantity) {
  * Warning: this does not check available products first
  */
 export function addItemById (id, quantity) {
+  console.log("addItemById")
   app.emit('cart:updating')
 
   return fetch('/cart/add.js', {
@@ -83,5 +93,9 @@ export function fetchCart () {
   return fetch('/cart.js', {
     method: 'GET',
     credentials: 'include'
-  }).then(res => res.json())
+  }).then( r => {
+    return r.json();
+  }).catch(e => {
+    console.log(e);
+  });
 }

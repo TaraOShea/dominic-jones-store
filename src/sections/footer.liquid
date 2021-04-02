@@ -1,26 +1,97 @@
-<footer class='slater-footer'>
-  <div class='outer'>
-    <!-- {% assign footer_menu = section.settings.footer_menu %}
-    {% if linklists[footer_menu].links.size > 0 %}
-      <ul class='f aic'>
-        {% for link in linklists[footer_menu].links %}
-          <li class='mr1 pr1'><a href="{{ link.url }}">{{ link.title }}</a></li>
-        {% endfor %}
-      </ul>
-    {% endif %} -->
+<footer class='footer'  data-component='footer'>
+  <div class="footer-left">
+    {% for block in section.blocks %}
+    <div class="footer-block"> 
+        <h5>{{block.settings.title}}</h5>
+        <ul>
+          {% for link in linklists[block.settings.menu].links %}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
   </div>
+  <div class="footer-right">
+    <h5>Sign up to to the mailinglist</h5>
+    <div id="subscribe">
+          <form action="https://dominicjonesjewellery.us1.list-manage.com/subscribe/post-json?u=62d2c244a93eeb5bcc62d3fca&amp;id=0b9d6722b9&amp;c=?" method="get" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+              <div class="email-wrapper">
+                  <input type="email" value="" name="EMAIL" placeholder="Email" class="required email" id="mce-EMAIL" autocomplete="off">
+                  <div class="submit-wrapper">
+                      <input type="submit" value="" name="subscribe" id="mc-embedded-subscribe" class="button mc-button">
+                  </div>
+              </div>    
+              <div id="mce-responses" class="clear">
+                  <div class="response" id="mce-error-response" style="display:none"></div>
+                  <div class="response" id="mce-success-response" style="display:none"></div>
+              </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+              <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_62d2c244a93eeb5bcc62d3fca_0b9d6722b9" tabindex="-1" value=""></div>
+          
+              <div class="agree">
+                  <div class="check">
+                      <div class="check-txt">
+                          <fieldset class="mc_fieldset gdprRequired mc-field-group" name="interestgroup_field"></fieldset>
+                              <input type="checkbox" id="gdpr_42342" name="gdpr[42342]" value="Y" class="av-checkbox gdpr visually-hidden">
+                              <label class="checkbox subfield label" for="gdpr_42342"><p>By agreeing you accept T&amp;Cs + privacy policy and you agree to join our database.</p></label>
+                          </fieldset>
+                          <div class="control"></div>
+                      </div>
+                  </div>
+              </div>
+              <div id="subscribe-result">
+              </div>
+          </form>
+    </div>
+  </div>
+    <div class="footer-copyright">
+      <div>{{shop.name}} &copy; {{ 'now' | date: "%Y" }}</div>
+      {% if section.settings.insta_url != blank %} 
+        <div class="footer-social">
+          <a href="{{section.settings.insta_url}}" target="_blank">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 395.8 395.8" style="enable-background:new 0 0 395.8 395.8;" xml:space="preserve">
+              <path d="M119.8,0C53.8,0,0,53.8,0,119.8V276c0,66,53.8,119.8,119.8,119.8H276c66,0,119.8-53.8,119.8-119.8V119.8
+              C395.8,53.8,342,0,276,0H119.8z M119.8,31.2H276c49.1,0,88.5,39.5,88.5,88.5V276c0,49.1-39.5,88.5-88.5,88.5H119.8
+              c-49.1,0-88.5-39.5-88.5-88.5V119.8C31.2,70.7,70.7,31.2,119.8,31.2z M302.1,72.9c-11.5,0-20.8,9.3-20.8,20.8s9.3,20.8,20.8,20.8
+              s20.8-9.3,20.8-20.8S313.6,72.9,302.1,72.9z M197.9,93.8c-57.3,0-104.2,46.8-104.2,104.2s46.8,104.2,104.2,104.2
+              s104.2-46.8,104.2-104.2S255.3,93.8,197.9,93.8z M197.9,125c40.4,0,72.9,32.5,72.9,72.9s-32.5,72.9-72.9,72.9S125,238.4,125,197.9
+              S157.5,125,197.9,125z"></path>
+            </svg>
+          </a>
+        </div>
+        {% endif %}
+    </div>
+   
 </footer>
 
 {% schema %}
-  {
-    "name": "Footer",
-    "settings": [
-      {
-        "type": "link_list",
-        "id": "footer_menu",
-        "label": "First menu",
-        "default": "footer"
-      }
-    ]
-  }
+{
+  "name": "Footer",
+	"max_blocks": 3,
+  "settings": [
+    {
+      "type": "url",
+      "id": "insta_url",
+      "label": "Instagram Link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "select",
+      "name": "Menu",
+      "settings": [
+          {
+          "id": "title",
+          "type": "text",
+          "label": "Heading",
+          "default": "Title"
+        },
+        {
+          "id": "menu",
+          "type": "link_list",
+       		"label": "Footer Menu"
+        }
+      ]
+    }
+  ]
+}
 {% endschema %}

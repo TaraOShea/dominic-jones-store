@@ -5,6 +5,10 @@ import app from '@/app.js'
 import router from '@/router.js'
 import { fetchCart } from '@/lib/cart.js'
 
+if(localStorage.getItem('siteColour') !== null){
+  localStorage.getItem('siteColour') === 'dark' ? document.body.className = 'bg-dark c-light' : document.body.className = 'c-dark bg-light';
+}
+
 /**
  * store binding fn
  */
@@ -15,7 +19,7 @@ const images = lazim()
  */
 images()
 
-router.on('before', () => {
+router.on('before', (ctx) => {
   if(app.getState().menuOpen === true) {
     app.emit('menu:close', state => {
         return {
@@ -25,13 +29,17 @@ router.on('before', () => {
   }
 })
 
-router.on('after', () => {
+router.on('after', (ctx) => {
+  console.log("route after")
+  document.body.id = ctx.pathname === "/" ? 'index' : '';
+
   app.unmount()
   app.mount()
   /**
    * bind new images
    */
   images()
+  window.scrollTo(0, 0);
 })
 
 /**
