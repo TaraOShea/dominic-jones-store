@@ -30,8 +30,13 @@ router.on('before', (ctx) => {
 })
 
 router.on('after', (ctx) => {
-  console.log("route after")
-  document.body.id = ctx.pathname === "/" ? 'index' : '';
+  if(ctx.pathname === "/") {
+    document.body.id = 'index';
+  } else if(ctx.pathname === "/pages/about"){
+    document.body.id = 'about';
+  } else {
+    document.body.id = '';  
+  }
 
   app.unmount()
   app.mount()

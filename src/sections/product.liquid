@@ -1,0 +1,192 @@
+<div data-component='product' class="product relative">
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+  <div class="product-back-link">
+    <a href={{ collection.url }}>Back to shop</a>
+  </div>
+  {% include 'product-head' %}
+  <section data-component='productSelection'>
+    <div class='outer'>
+      <div class='container--l mxa'>
+        <div class='slater-product f jcb fw'>
+          <div class='slater-product__images{%if product.images.size <= 1%} single-image{%endif%}'>
+              {% for image in product.images %}
+                <div class="slater-product__image" data-id={{image.id}}>
+                {% assign img = image.src | img_url: '600x650', crop: 'center' %}
+                {% assign imgObj = image %}
+                {% assign alt = image.alt | escape %}
+                {%
+                  include 'component-image' with
+                  src: img,
+                  img: imgObj,
+                  width: 600.0,
+                  height: 650.0,
+                  alt: alt
+                %}
+                </div>
+              {% endfor %}
+          </div>
+
+          <div class='slater-product__info'>
+            <div class="slater-product__info-sticky">
+              <form action='/cart/add' method='post' enctype='multipart/form-data' data-component='productForm'>
+                <div class='f fw aic pb1 jcb'>
+                  <h1 class="tu">{{ product.title }}</h1>
+                  <div>
+                    <span data-price>{{ current_variant.price | money }}</span>
+                    <s data-compare-price>{{ current_variant.compare_at_price | money }}</s>
+                  </div>
+
+                  {% assign isColourVarient = false %}
+                  {% for option in product.options_with_values %}
+                    {%if option.name == 'Color' or option.name == 'Colour' %}
+                        {% assign isColourVarient = true %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if isColourVarient%}
+                    {% for option in product.options_with_values %}
+                      {%if option.name == 'Color' or option.name == 'Colour' %}
+                        <div class="bs100 pt025 op60" data-colourName>
+                          {{option.selected_value}}
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  {% elsif product.metafields.colour.name !=  blank%}
+                      <div class="bs100 pt025 op60">
+                          {{product.metafields.colour.name}}
+                      </div>
+                  {% endif %}
+                </div>
+
+                {%if product.description != blank %}
+                <div class="rte pb1 serif">
+                    {{ product.description }}
+                </div>
+                {% endif %}
+
+                {% include 'product-options' with 
+                    swatches: section.blocks
+                %}
+
+                {% include 'component-counter' %}
+                <div class='{% if product.has_only_default_variant %}py1{% else %} pb1{% endif %}'>
+                  {%- capture cta -%}
+                    {% if product.available %}
+                      Add to Bag
+                    {% else %}
+                      Sold Out
+                    {% endif %}
+                  {%- endcapture -%}
+
+
+                  {%- capture ctaclasses -%}
+                    {%- if product.available -%}
+                      js-add-to-cart in-stock tu
+                    {%- else -%}
+                      js-add-to-cart out-of-stock tu
+                    {%- endif -%}
+                  {%- endcapture -%}
+
+                    {%- if product.available -%}
+                      {% assign disabled = false %}
+                    {%- else -%}
+                      {% assign disabled = true %}
+                    {%- endif -%}
+                  <div class="error-notice hide pb1" data-error></div>
+                  {%
+                    include 'component-button' with
+                    tag: 'button',
+                    name: 'add',
+                    type: 'submit',
+                    className: ctaclasses,
+                    attributes: 'data-add-to-cart',
+                    cta: cta,
+                    disabled: disabled
+                  %}
+                </div>
+              </form>
+              {% if product.metafields.title.title != blank %}
+              <div class="product-dropdowns py1" data-component='productDropdowns'>
+                {% for value in product.metafields.title.title %} 
+                <div class="dropdown">
+                  <button class="dropdownBTN tu al pb05 pr2">
+                    {{value}}
+                    <div class="plus-icon">
+                        <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g id="dropdown-plus" transform="translate(-1750.000000, -763.000000)" stroke="#000000" stroke-width="2">
+                                    <g transform="translate(1356.000000, 762.000000)">
+                                        <g transform="translate(393.000000, 0.000000)">
+                                            <g transform="translate(10.000000, 10.000000) rotate(45.000000) translate(-10.000000, -10.000000) translate(2.941176, 2.941176)">
+                                                <rect id="Rectangle" x="0" y="0" width="14.1176471" height="14.1176471" rx="7.05882353"></rect>
+                                                <line x1="4.85294118" y1="4.85294118" x2="9.26470588" y2="9.55882353" id="Line-2" stroke-linecap="round" transform="translate(7.058824, 7.205882) rotate(-1.847610) translate(-7.058824, -7.205882) "></line>
+                                                <line x1="4.85294118" y1="4.85294118" x2="9.26470588" y2="9.55882353" id="Line-2" stroke-linecap="round" transform="translate(7.058824, 7.205882) scale(-1, 1) rotate(-1.847610) translate(-7.058824, -7.205882) "></line>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                      </div>
+                  </button>
+                  <div class="dropdown-content pb1 pr2 serif">
+                    {{product.metafields.body.body[forloop.index0]}}
+                  </div>
+                </div>
+                {% endfor %} 
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class='slater-product__pop_gallery z30'>
+    <div class="container--s mxa">
+      <div class="outer">
+        <div id="pop_gallery__images"></div>
+      </div>
+    </div>
+    <button id="pop_gallery_close">
+      <svg width="13px" height="12px" viewBox="0 0 13 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+                <g id="close-icon" transform="translate(-438.000000, -21.000000)" stroke="#000000" stroke-width="1.5">
+                    <g id="Group" transform="translate(439.000000, 22.000000)">
+                        <line x1="5.5" y1="0.25" x2="5.5" y2="9.75" id="Line-3"></line>
+                        <line x1="5.49999991" y1="0" x2="5.49999991" y2="10" id="Line-3" transform="translate(5.500000, 5.000000) rotate(90.000000) translate(-5.500000, -5.000000) "></line>
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </button>
+    </div>
+  </section>
+</div>
+{% schema %}
+{
+  "name": "Swatch Colours",
+  "blocks": [
+    {
+      "type": "select",
+      "name": "Colour Swatch",
+      "settings": [
+          {
+          "id": "title",
+          "type": "text",
+          "label": "Colour Name",
+          "default": "9ctGold",
+          "info": "Match this name to the name of the varient colour, ie: 9ct Gold, Silver"
+        },
+        {
+            "type": "color",
+            "id": "color",
+            "label": "Swatch Colour",
+            "default": "#FFFFFF"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

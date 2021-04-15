@@ -1,2 +1,22 @@
-<h1>{{ 'general.404.title' | t }}</h1>
-<p>{{ 'general.404.subtext_html' | t }}</p>
+<div class="f aic relative page full-browser">
+    <div class="outer container--l mxa ac">
+        {% if settings.fourohfour != blank %}
+            <div class="four-oh-four-img mxa pb075">
+            {% assign IMG = settings.fourohfour | img_url: '300x'  %}
+            {% assign width = 0.000 | plus: settings.fourohfour.width %}
+            {% assign height = 0.000 | plus: settings.fourohfour.height %}
+            {%
+                include 'component-image' with
+                src: IMG,
+                img: IMG,
+                width: width
+                height: height,
+                alt: section.s settings.fourohfour.alt | escape
+            %}
+            </div>
+        {% endif %}
+        <h1 class="tu pb075">{{ 'general.404.title' | t }}</h1>
+        <p class="serif large-body">{{ 'general.404.subtext_html' | t }}</p>
+        <p class="tu"><a href="/"">Click here</a> to continue shopping.</p>
+    </div>
+</div>

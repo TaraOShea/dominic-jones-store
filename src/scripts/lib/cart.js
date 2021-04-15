@@ -15,11 +15,11 @@ export function addVariant (variant, quantity, inventory) {
   return fetchCart().then(({ items }) => {
     let numInCart = items.filter(v => v.id === variant.id)[0];
     numInCart = numInCart !== undefined ? numInCart.quantity : 0;
-    console.log(numInCart, parseInt(quantity), inventory.amountAvailable)
+    console.log(numInCart, parseInt(quantity), inventory.amountAvailable,variant.name)
 
     if (inventory.amountAvailable !== null && (numInCart + parseInt(quantity)) > inventory.amountAvailable) {  
-      const err = `There are only ${inventory.amountAvailable} of that product available, requested ${parseInt(quantity)}.`
-      console.log("error")
+      // const err = `There are only ${inventory.amountAvailable} of that product available, requested ${parseInt(quantity)}. num in cart ${numInCart}`
+      const err = `All available ${variant.name} are in your bag.`
       app.emit('cartError', {error: err})
       // throw new Error(err)
     } else {
@@ -64,7 +64,6 @@ function changeAddon (line, quantity) {
  * Warning: this does not check available products first
  */
 export function addItemById (id, quantity) {
-  console.log("addItemById")
   app.emit('cart:updating')
 
   return fetch('/cart/add.js', {

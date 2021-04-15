@@ -5,7 +5,10 @@ export default function productSelection (node, opts) {
     select: '[data-option-select]',
     radio: '[data-option-radio]',
     main: '[data-option-main]',
-    price: '[data-price]'
+    price: '[data-price]',
+    cta: '[data-add-to-cart]',
+    colour: '[data-colourName]',
+    error: '[data-error]'
   }, opts)
 
   const listeners = []
@@ -14,13 +17,17 @@ export default function productSelection (node, opts) {
     id: null,
     options: [], 
     avalible: null,
-    price: null
+    price: null,
+    colour: null
   }
 
   const selects = slater.qsa(opts.select)
   const radios = slater.qsa(opts.radio)
   const main = slater.qs(opts.main)
   const price = slater.qs(opts.price)
+  const cta = slater.qs(opts.cta)
+  const colour = slater.qs(opts.colour)
+  const error = slater.qs(opts.error)
 
   if (!main || !main.length) throw 'data-option-main is missing'
   if (radios.length > 3) throw 'you have more than three radio groups'
@@ -30,7 +37,8 @@ export default function productSelection (node, opts) {
     variants[child.innerHTML] = { 
       id: child.value, 
       avalible: child.getAttribute('data-avalible') === "true" ? true : false,
-      price: child.getAttribute('data-price')
+      price: child.getAttribute('data-price'),
+      colour: child.getAttribute('data-colour')
     }
     return variants
   }, {})
@@ -47,7 +55,6 @@ export default function productSelection (node, opts) {
   })
 
   radios.forEach(r => {
-    console.log("radios", r)
 
     if (r.nodeName === 'INPUT') throw 'data-option-radio should be defined on a parent of the radio group, not the inputs themselves'
 
@@ -68,16 +75,33 @@ export default function productSelection (node, opts) {
   updateSelection()
 
   function updateSelection () {
+    error.innerHTML = "";
+    error.classList.add('hide');
     var option = variants[state.options.join(' / ')] === undefined ? variants["Default Title"] : variants[state.options.join(' / ')];
-
     state.id = option.id;
     state.avalible = option.avalible;
     state.price = option.price;
+    state.colour = option.colour;
 
+
+   //ATC BUTTON STATE
+    if(state.avalible) {
+      cta.innerHTML = "Add to Bag";
+      cta.disabled = false;
+      cta.classList.remove('out-of-stock');
+      cta.classList.add('in-stock')
+    } else {
+      cta.innerHTML = "Sold Out";
+      cta.disabled = true;
+      cta.classList.remove('in-stock');
+      cta.classList.add('out-of-stock')
+    }
     main.value = state.id;
     price.innerHTML = state.price;
+    colour !== null ? colour.innerHTML = state.colour : null;
     for (let fn of listeners) fn(state)
   }
+
 
   return {
     get state () {

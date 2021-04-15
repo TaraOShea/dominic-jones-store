@@ -1,17 +1,25 @@
-<label class='radio f aic' for={{label}}>
-  <input
-    id={{label}}
-    type=radio
-    name={{name}}
-    value={{value}}
-    {{ attributes }}
-    {% if checked %}checked{% endif %}
-  />
-  <span>{{label}}</span>
+<div class="colour-swatch">
+<input
+  id={{label}}
+  type=radio
+  class="visually-hidden"
+  name={{name}}
+  value={{value}}
+  {{ attributes }}
+  {% if checked == label%}checked{% endif %}
+/>
+<label 
+  class='radio f aic' 
+  for={{label}} 
+  style="background-color:{{swatch}}"
+>
 </label>
+</div>
 
 {% assign label = blank %}
 {% assign name = blank %}
 {% assign value = blank %}
 {% assign attributes = blank %}
 {% assign checked = blank %}
+{% assign swatch = blank%}
+

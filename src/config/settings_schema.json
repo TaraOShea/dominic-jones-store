@@ -8,35 +8,6 @@
     "theme_support_url": "https://github.com/the-couch/slater-theme"
   },
   {
-    "name": "Typography",
-    "settings": [
-      {
-        "type": "select",
-        "id": "type_base_size",
-        "label": "Base size",
-        "default": "16px",
-        "options": [
-          {
-            "value": "14px",
-            "label": "14px"
-          },
-          {
-            "value": "15px",
-            "label": "15px"
-          },
-          {
-            "value": "16px",
-            "label": "16px"
-          },
-          {
-            "value": "17px",
-            "label": "17px"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "name": "Colors",
     "settings": [
       {
@@ -59,6 +30,16 @@
       }
     ]
   },
+    {
+    "name": "404",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "fourohfour",
+        "label": "404 image"
+      }
+    ]
+  },
   {
     "name": "Social media",
     "settings": [
@@ -70,24 +51,6 @@
         "type": "checkbox",
         "id": "social_sharing_blog",
         "label": "Enable sharing for blog articles",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "share_facebook",
-        "label": "Share on Facebook",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "share_twitter",
-        "label": "Tweet on Twitter",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "share_pinterest",
-        "label": "Pin on Pinterest",
         "default": true
       },
       {

@@ -1,0 +1,64 @@
+  <div class="f aic relative page container--l mxa">
+      <div class="outer f fw jcb aic">
+        <div class="bs46">
+        {% assign IMG = section.settings.about_image | img_url: '800x'  %}
+        {% assign width = 0.000 | plus: section.settings.about_image.width %}
+        {% assign height = 0.000 | plus: section.settings.about_image.height %}
+        {%
+          include 'component-image' with
+          src: IMG,
+          img: IMG,
+          width: width
+          height: height,
+          alt: section.settings.about_image.alt | escape
+        %}
+        </div>
+        <div class="bs46">
+          <h1 class="tu pb1">{{section.settings.title}}</h2>
+          <div class="serif large-body pb2">
+            {{page.content }}
+          </div>
+          <div class="tu">
+            {{section.settings.more_info}}
+            <div>{{section.settings.email_text}} <a href="mailto:{{section.settings.email}}">{{section.settings.email}} </a>
+          </div>
+        </div>
+      </div>
+  </div>
+
+{% schema %}
+  {
+    "name": "About",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "About Dominic Jones Jewellery"
+      },
+      {
+        "type": "image_picker",
+        "id": "about_image",
+        "label": "About Image"
+      },
+      {
+        "type": "text",
+        "id": "more_info",
+        "label": "More Info",
+        "default": "For more information"
+      },
+      {
+        "type": "text",
+        "id": "email_text",
+        "label": "Email Label",
+        "default": "Email"
+      },
+      {
+        "type": "text",
+        "id": "email",
+        "label": "Email Address",
+        "default": "info@dominicjonesjewellery.com"
+      }
+    ]
+  }
+{% endschema %}

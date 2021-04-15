@@ -1,22 +1,37 @@
 {% comment %}
   This page represents the /collections and /products pages.
 {% endcomment %}
+<div class='collection'>
+    <div class='outer'>
+      <div class='collection__grid__row f fw jcb'>
+        {% for collection in collections %}
+          {% unless collection.handle == 'frontpage' %}
+            <div class='collection__grid__item'>
+              {% if collection.image != blank %}
+                {% assign image = collection | img_url: '480x480' %}
+                {% assign alt = collection.alt | escape %}
+              {% elsif collection.products.first != blank %}
+                {% assign image = collection.products.first | img_url: '480x480'  %}
+                {% assign alt = collection.products.first.alt | escape %}
+              {% else %}
+                {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                {% assign image = 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg placeholder-svg--small' %}
+                {% assign alt = collection.products.first.alt | escape %}
+              {% endif %}
+              <a href='{{ collection.url }}'  title="{{ 'collections.general.link_title' | t: title: title }}">
+                {%
+                  include 'component-image' with
+                  src: image,
+                  alt: alt
+                %}
+              </a>
 
-{% for collection in collections %}
-  {% unless collection.handle == 'frontpage' %}
-    <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: title }}">
-      {% if collection.image != blank %}
-        {{ collection | img_url: '480x480' | img_tag: collection.title }}
-      {% elsif collection.products.first != blank %}
-        {{ collection.products.first | img_url: '480x480' | img_tag: collection.title }}
-      {% else %}
-        {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
-        {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg placeholder-svg--small' }}
-      {% endif %}
-    </a>
-
-    <p>
-      <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: title }}">{{ collection.title }}</a>
-    </p>
-  {% endunless %}
-{% endfor %}
+              <p>
+                <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: title }}" class="tu">{{ collection.title }}</a>
+              </p>
+            </div>
+          {% endunless %}
+        {% endfor %}
+      </div>
+    </div>
+</div>

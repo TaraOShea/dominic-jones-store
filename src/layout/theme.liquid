@@ -2,10 +2,12 @@
 <html lang='{{ shop.locale }}'>
   <head>
     <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width,initial-scale=1'>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel='canonical' href='{{ canonical_url }}'>
-    <link rel='shortcut icon' href='' type='image/png'>
 
+      {% if settings.favicon != blank %}
+        <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+      {% endif %}
     {% capture seo_title %}
       {{ page_title }}
       {% if current_tags %}
@@ -42,7 +44,7 @@
     {{ content_for_header }}
   </head>
 
-  <body {% if template == 'index' %}id="index"{% endif %} class="c-dark bg-light">
+  <body {% if template == 'index'%}id="index"{% endif %}{% if template == 'page.about'%}id="about"{% endif %}  class="c-dark bg-light">
 
     {% section 'header' %}
 

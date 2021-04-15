@@ -1,23 +1,30 @@
-{% paginate collection.products by 24 %}
-<div class='collection'>
-  <header role="banner" class='mha'>
+{% paginate collection.products by 28 %}
+<div class='collection' data-component='collectionList'>
+  <header role="banner" class='mha collection-header'>
     <div class='outer'>
-      <div class="collection-details">
+      <div class="collection-details pb2">
         {% if section.settings.tags_enable %}
-            {% unless collection.all_tags.size == 0 %}
-            <!-- TARA https://christopherdodd.com/shopify-collection-filtering/ -->
-            {% assign json_product = collection.products.first | json %}         
-            <div class="filters-toolbar"> 
-                    <span data-component='collectionList'>
-                      <button id="filter-category" class="filters-toolbar__label">Filter <span class="chevron">+</span></button>
-                      <div class="filters-toolbar__sub_menu">
-                          {% for tag in collection.all_tags %}
-                              <a class="filters-toolbar__label" href="/collections/{% if collection.handle != blank %}{{ collection.handle }}{% else %}all{% endif %}/{{ tag | handleize }}"{% if current_tags contains tag %} selected="selected"{% endif %}>{{ tag }}</a>
-                          {% endfor %}
-                      </div>
-                    </span>
-            </div>
-            {% endunless %}
+            {% if collection.metafields.tags.tags != blank %}
+              <!-- TARA https://christopherdodd.com/shopify-collection-filtering/ -->
+              {% assign json_product = collection.products.first | json %}         
+              <div class="filters-toolbar pb1"> 
+                  <button id="filter-category" class="filters-toolbar__label mxa">Filter <span class="chevron">+</span></button>
+                  <div class="filters-toolbar__sub_menu container--s py1 mxa">
+                    <h4 class="tu pb1">{{collection.metafields.title.title}}</h4>
+                      {% assign extraProducts = collection.metafields.tags.tags | split:"|" %}
+                        {% for value in extraProducts%}  
+                          {% if forloop.first %}
+                            {% assign newValue = value | remove: '["' %}
+                          {% elsif forloop.last %}
+                            {% assign newValue =  value | remove: '"]' %}
+                          {% else %}
+                            {% assign newValue = value %}
+                          {% endif %}
+                            <div class="{% if current_tags contains newValue %}selected{% endif %} tu"><a href="/collections/{% if collection.handle != blank %}{{ collection.handle }}{% else %}all{% endif %}/{{newValue | handleize}}">{{newValue}}</a></div>
+                        {% endfor %} 
+                </div>
+              </div>
+            {% endif %}
         {% endif %}
         <!-- {% if collection.tags %}
         {% for tag in collection.tags %}
@@ -28,42 +35,85 @@
         {% endfor %}
         {% endif %} -->
         {% if collection.title != blank  %}
-          <div class="collection-title">
+          <div class="collection-title tu">
             {{ collection.title }}
           </div>
         {% endif %}
-        {% if collection.description != blank %}
-          <div class="collection-desc">
-            {{ collection.description }}
-          </div>
-        {% endif %}
+
       </div>
     </div>
   </header>
 
-  <section class='collection__grid'>
+  <section class='collection__grid pb4'>
     <div class='outer'>
       
-        <div class='collection__grid__row'>
+        <div class='collection__grid__row f fw jcb'>
+          {% assign count = 0 %}
           {% for product in collection.products %}
             {% assign url = product.url | within: collection %}
             {% assign price = product.price | money %}
             {% assign comparePrice = product.compare_at_price | money %}
-            {% assign image = product.featured_image.src | product_img_url: '600x' %}
+            {% assign image = product.featured_image.src | product_img_url: '600x650', crop: 'center' %}
             {% assign alt = product.featured_image.alt | escape %}
-
+            {% assign imgObj = product.featured_image %}
+           
+            {% assign every4 = false %}
+            {% if forloop.index == 1 or forloop.index == 10 or forloop.index == 16 %}
+              {% assign every4 = true %}
+            {% endif %}
+          
+            {% if every4 %}
+            {% assign inter = current_page | minus: 1 | times: 4 | plus: count %} 
+            {% assign featureimage = section.blocks[inter].settings.image.src | product_img_url: '600x650', crop: 'center' %}
+              {% if section.blocks[inter].settings.image != blank%}
+                <div class='collection__grid__item'>
+                  {%
+                    include 'component-image' with
+                    src: featureimage,
+                    img: section.blocks[inter].settings.image,
+                    width: 600.0,
+                    height: 650.0,
+                    alt: section.blocks[inter].settings.image.alt | escape 
+                  %}
+                  {% assign count = count | plus: 1 %}
+                </div>
+              {% endif %} 
+            {% endif %} 
             <div class='collection__grid__item'>
               <a href='{{ url }}'>
-                {%
-                  include 'component-image' with
-                  src: image,
-                  alt: alt
-                %}
+                <div class="collection-image relative">
+                  {%
+                    include 'component-image' with
+                    src: image,
+                    img: imgObj,
+                    width: 600.0,
+                    height: 650.0,
+                    alt: alt
+                  %}
+                   {% if product.images.size > 1 %} 
+                    <div class="hover-img z1">
+                      {% assign hoverIMG = product.images[1].src | img_url: '600x650', crop: 'center' %}
+                      {%
+                        include 'component-image' with
+                        src: hoverIMG,
+                        img: product.images[1].src,
+                        width: 600.0,
+                        height: 650.0,
+                        alt: product.images[1].alt | escape
+                      %}
+                    </div>
+                  {% endif %}
+                </div>
               </a>
+
               <a href='{{ url }}'>
-                <div class="priduct-info">
-                <h3>{{ product.title }}</h3>
-                  <div class='product-price'>
+                <div class="product-info f jcb fw">
+                <h3 class="tu">{{ product.title }}</h3>
+                  <div class='product-price tu'>
+                    {% unless product.available %}
+                      <div class="sold-out">sold out</div>
+                    {% endunless %}
+                    
                     {% if comparePrice > price %}
                       {% if product.price_varies %}
                         from {{ price }}
@@ -72,63 +122,84 @@
                         <div><s>{{ comparePrice }}</s></div>
                       {% endif %}
                     {% else %}
-                    {% unless product.available %}<span class="price-sold-out">{% endunless %}
-                      {% if product.price_varies %}
-                        from {{ price }}
-                      {% else %}
-                        {{ price }}
-                      {% endif %}
-                    {% unless product.available %}</span>{% endunless %}
+                        {% if product.available %}
+                          <span>
+                            {% if product.price_varies %}
+                              from {{ price }}
+                            {% else %}
+                              {{ price }}
+                            {% endif %}
+                          </span>
+                        {% endif %}
                     {% endif %}
-                    {% unless product.available %}
-                      <div class="sold-out">sold out</div>
-                    {% endunless %}
+
                   </div>
                 </div>
               </a>
-
-
             </div>
+            {% if forloop.index == 24 %}
+              {% assign inter = current_page | minus: 1 | times: 4 | plus: count %} 
+              {% assign featureimage = section.blocks[inter].settings.image.src | product_img_url: '600x650', crop: 'center' %}
+              {% if section.blocks[inter].settings.image != blank%}
+                <div class='collection__grid__item'>
+                  {%
+                    include 'component-image' with
+                    src: featureimage,
+                    img: section.blocks[inter].settings.image,
+                    width: 600.0,
+                    height: 650.0,
+                    alt:  section.blocks[inter].settings.image.alt  | escape
+                  %}
+                  {% assign count = count | plus: 1 %}  
+                </div>
+              {% endif %}
+            {% endif %}
           {% endfor %}
         </div>
     </div>
   </section>
 
-  {% if paginate.pages > 1 %}
-    {{ paginate | default_pagination }}
-  {% endif %}
-</div>
-
+  <div class="container--m py2 ac mxa pagination">
+    {% if paginate.pages > 1 %}
+      {{ paginate | default_pagination: next: 'Older', previous: 'Newer' }}
+    {% endif %}
+  </div>
 {% endpaginate %}
 
-
+        {% if collection.description != blank %}
+        <div class="pb8">
+          <div class="outer">
+            <div class="collection-desc ser ac mxa">
+              {{ collection.description }}
+            </div>
+          </div>
+        </div>
+        {% endif %}
 
 {% schema %}
 {
-  "name": {
-    "de": "Kategorie-Seiten",
-    "en": "Collection pages",
-    "es": "Páginas de colección",
-    "fr": "Pages de collections",
-    "it": "Pagine delle collezioni",
-    "ja": "コレクションページ",
-    "pt-BR": "Páginas de coleções"
-  },
+  "name": "Collection Settings",
   "settings": [
     {
       "type": "checkbox",
       "id": "tags_enable",
-      "label": {
-        "de": "Tag-Filtern erlauben",
-        "en": "Enable tag filtering",
-        "es": "Habilitar filtro de etiquetas",
-        "fr": "Activer le filtrage par balises",
-        "it": "Attiva filtro tag",
-        "ja": "タグでの絞り込みを有効にする",
-        "pt-BR": "Ativar filtragem de tags"
-      },
+      "label": "Enable tag filtering",
       "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image  ",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
     }
   ]
 }
+
 {% endschema %}

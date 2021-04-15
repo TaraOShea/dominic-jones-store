@@ -22,7 +22,7 @@
 
     <footer class='cart-checkout outer abs bottom left right'>
       <h5 class='cart-total f jcb'><span>Total</span> <span class='js-subtotal'>£-.--</span></h5>
-      <div class='cart-notes ac'>(Excluding Shipping + TAX)</div>
+      <div class='cart-notes ac'>(Excluding Shipping)</div>
       <div>
         {%
           include 'component-button' with
@@ -31,6 +31,9 @@
           href: '/checkout',
           className: 'no-ajax'
         %}
+        <div class="additional-checkout-buttons additional-checkout-buttons--vertical">
+          {{ content_for_additional_checkout_buttons }}
+        </div>          
       </div>
     </footer>
   </div>

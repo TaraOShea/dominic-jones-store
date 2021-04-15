@@ -1,57 +1,114 @@
-<div class='product-options-wrapper rel'>
+<div class='product-options-wrapper rel{% unless product.has_only_default_variant %} py1{% endunless %}'>
   {% unless product.has_only_default_variant %}
-    
-      <div class='py1'>
+      <div class=''>
         {% for option in product.options_with_values %}
-          <div class='py05'>
-            {%- capture options -%}
-              {% for value in option.values %}
-                <option value='{{ value | escape }}'
-                  {% if option.selected_value == value %}selected{% endif %}>
-                  {{ value }}
-                </option>
-              {% endfor %}
-            {%- endcapture -%}
-            {%- capture attributes -%}
-              data-option-select
-              data-index='{{ forloop.index0 }}'
-            {%- endcapture -%}
-            {%
-              include 'component-select' with
-              label: option.name,
-              name: option.name,
-              attributes: attributes
-              options: options
-            %}
-          </div>
+          {%if option.name != 'Color' and option.name != 'Colour'%}
+          <div class="tu">Choose {{option.name}}</div>
+            <div class='py05'>
+              {%- capture options -%}
+                {% for value in option.values %}
+                  <option value='{{ value | escape }}'
+                    {% if option.selected_value == value %}selected{% endif %}>
+                    {{ value }}
+                  </option>
+                {% endfor %}
+              {%- endcapture -%}
+              {%- capture attributes -%}
+                data-option-select
+                data-index='{{ forloop.index0 }}'
+              {%- endcapture -%}
+              {%
+                include 'component-select' with
+                label: option.name,
+                name: option.name,
+                attributes: attributes
+                options: options
+              %}
+            </div>
+          {% endif %}
         {% endfor %}
       </div>
-<!-- 
-      <div class='py1'>
+      <div>
+        {% assign isColourVarient = false %}
         {% for option in product.options_with_values %}
-          <div class='py05'>
-            <label>{{ option.name }}</label>
-            <div class='radio-group f aic' data-option-radio data-index={{ forloop.index0 }}>
-              {% for value in option.values %}
-                {%
-                  include 'component-radio' with
-                  label: value,
-                  value: value,
-                  name: option.name,
-                  checked: option.selected_value == value
-                %}
+          {%if option.name == 'Color' or option.name == 'Colour' %}
+              {% assign isColourVarient = true %}
+          {% endif %}
+        {% endfor %}
+
+        {% if isColourVarient%}
+          {% for option in product.options_with_values %}
+            {%if option.name == 'Color' or option.name == 'Colour' %}
+            <div class='py1 f aic jcb'>
+              <label class="tu">Colours availble</label>
+              <div class='radio-group f aic' data-option-radio data-index={{ forloop.index0 }}>
+                {% for value in option.values %}
+                  {% for block in swatches %}{%if value == block.settings.title%} {% assign swatch = block.settings.color %}{% endif %}{% endfor%}
+                  {%
+                    include 'component-radio' with
+                    label: value,
+                    value: value,
+                    name: option.name,
+                    checked: option.selected_value == value, 
+                    swatch: swatch
+                  %}
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        {% elsif product.metafields.varient-colour.product !=  blank%}
+          {% assign extraProducts = product.metafields.varient-colour.product| split:"|" %}
+          <div class="f py1 f aic jcb">
+            <h5 class="tu">Colours availble</h5>
+            <div class="radio-group f aic">
+              {% for value in extraProducts%} 
+                {% if forloop.first %}
+                  {% assign newValue = value | remove: '["' %}
+                {% elsif forloop.last %}
+                  {% assign newValue =  value | remove: '"]' %}
+                {% else %}
+                  {% assign newValue = value %}
+                {% endif %}
+                {% assign extraProduct = all_products[newValue]%}
+                {% if extraProduct.metafields.colour.swatch != blank %}
+                {% assign url = extraProduct.collections.first.url | append: '/products/' | append:  extraProduct.handle %}
+                  {% for value in extraProduct.metafields.colour.swatch %} 
+                    <a href={{url}} class="meta-colour" style="background-color:{{value}};"></a>
+                  {% endfor %}
+                {% endif %}
               {% endfor %}
             </div>
           </div>
-        {% endfor %}
-      </div> -->
+        {% endif %}
+      </div>
   {% endunless %}
-  
+  {% unless product.has_only_default_variant %}
+      {% for i in (0..2) %}
+        {% if product.options_with_values[i].name != blank %}
+          {% assign key = i %}
+          {% assign path = key | prepend:'option' %}
+          {%if product.options_with_values[i].name == 'Color' or product.options_with_values[i].name == 'Colour' %}
+            {% assign optionNum = i %} 
+          {% endif %}
+        {% endif %}
+        {% assign key = i | plus: 1 %}
+      {% endfor %}
+  {% endunless %}
+
   {%- capture options -%}
-    {% for variant in product.variants %}
+      {% for variant in product.variants %}
+      {% if optionNum == 0 %}
+        {% assign optionColor = variant.option1 %} 
+      {% elsif optionNum == 1 %}
+        {% assign optionColor = variant.option2 %} 
+      {% elsif optionNum == 2 %}
+        {% assign optionColor = variant.option3 %} 
+      {% endif %}
       <option value='{{ variant.id }}'
         data-avalible='{{variant.available}}'
         data-price='{{variant.price | money}}'
+        data-colour='{{optionColor}}'
         {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
         {% unless variant.available %}disabled{% endunless %}>{{ variant.title }}</option>
     {% endfor %}
@@ -64,7 +121,6 @@
     var Shopify = Shopify || {};
         Shopify.optionsMap = {};
 
-    
     Shopify.linkOptionSelectors = function(product) {
       console.log(product, product.product.variants)
       // Building our mapping object.
@@ -100,9 +156,12 @@
     include 'component-select' with
     name: 'id'
     options: options
-    className: 'js-variant'
+    className: 'js-variant hide'
     required: true
     attributes: 'data-option-main',
-    size: product.variants.size
+    size: product.variants.size,
+    placeholder: false
   %}
+  {% assign swatches = blank %}
+
 </div>

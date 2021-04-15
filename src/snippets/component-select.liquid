@@ -7,7 +7,19 @@
 {%- endcapture -%}
 <div class='{{ cx }}' style='{{ style }}'>
   <label for='{{ id | default: uid | strip }}' class='hide'>{{ label }}</label>
-  <div class='rel'>
+  <div class='rel select-wrap'>
+  <div class="plus-icon">
+    <svg width="13px" height="12px" viewBox="0 0 13 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+            <g id="plus-icon" transform="translate(-438.000000, -21.000000)" stroke="#000000" stroke-width="1.5">
+                <g id="Group" transform="translate(439.000000, 22.000000)">
+                    <line x1="5.5" y1="0.25" x2="5.5" y2="9.75" id="Line-3"></line>
+                    <line x1="5.49999991" y1="0" x2="5.49999991" y2="10" id="Line-3" transform="translate(5.500000, 5.000000) rotate(90.000000) translate(-5.500000, -5.000000) "></line>
+                </g>
+            </g>
+        </g>
+    </svg>
+  </div>
     <select
       id='{{ id | default: uid | strip }}'
       name='{{ name | default: label | strip }}'
@@ -15,7 +27,7 @@
       value='{{ value }}'
       {{ attributes }}
       {% if required %}required{% endif %}>
-      <!-- {% if placeholder %}<option disabled selected>{{ placeholder }}</option>{% endif %} -->
+      {% if placeholder %}<option disabled selected>{{ placeholder }}</option>{% endif %}
       {{ options }}
     </select>
 

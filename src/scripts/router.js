@@ -1,4 +1,5 @@
 import operator from 'operator'
+import analytics from '@/lib/analytics.js'
 
 /**
  * operator is a tiny "PJAX" library, please have a look at the docs for
@@ -18,9 +19,14 @@ const router = operator('#root', [
   })
 ])
 
-router.on('after', ({ previousDocument, location }) => {
+router.on('after', ({ previousDocument, location, pathname }) => {
   document.title = previousDocument.title
   window.history.pushState({}, '', location)
+
+  analytics({
+    ga: ['set', 'page', pathname],
+    ga: ['send', 'pageview']
+  })
 })
 
 

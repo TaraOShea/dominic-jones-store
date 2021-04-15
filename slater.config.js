@@ -9,6 +9,14 @@ module.exports = {
       ignore: [
         'settings_data.json' // leave this here to avoid overriding theme settings on sync
       ]
+    },
+    production: {
+      id: '121584582826	',
+      password: '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',
+      store: 'dominic-jones-jewellery.myshopify.com',
+      ignore: [
+        'settings_data.json' // leave this here to avoid overriding theme settings on sync
+      ]
     }
   }
 }
